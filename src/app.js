@@ -1,6 +1,15 @@
 const express = require("express");
+const {adminAuth} = require('../middleware/auth')
 
 const app = express()
+
+app.use('/admin' , adminAuth)
+
+app.get('/admin/getData',(req,res,next)=>{
+    console.log("admin auttentoication success")
+    res.send("admin authentication success")
+})
+
 
 
 app.use('/user',
