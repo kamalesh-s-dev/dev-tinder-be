@@ -1,11 +1,13 @@
 const express = require("express");
 const profileRouter = express.Router();
 const {userAuth} = require("../../middleware/auth")
+const {validateProfilEditData} = require("../utils/validation")
 
 
-profileRouter.post("/profile", userAuth ,async(req,res)=>{
+profileRouter.post("/profile/view", userAuth ,async(req,res)=>{
     try{
        const user = req.user
+       console.log(user)
 
        if(!user){
         throw new Error("User is missing")
@@ -13,9 +15,37 @@ profileRouter.post("/profile", userAuth ,async(req,res)=>{
 
        res.send(user)
     }catch(err){
+        res.status(400).send("Error : " + err.message)
         console.log(err)
     }
 })
+
+
+profileRouter.patch("/profile/edit", userAuth, async(req,res)=>{
+    try{
+
+        if(!validateProfilEditData(req)){
+            throw new Error("Invalid Edit Request")
+        }
+
+        const user = req.user
+
+        Object.keys(req.body).forEach((field)=>{
+            user[field] = req.body[field]
+        })
+
+        console.log(user)
+
+        await user.save()
+        res.send("Profile Updated Successfully")
+
+    }catch(err){
+        res.status(400).send("Error : " + err.message)
+    }
+})
+
+
+
 
 profileRouter.get("/getAllUsers", async (req,res)=>{
     try{
