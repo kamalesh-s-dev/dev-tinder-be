@@ -5,7 +5,6 @@ const User = require("../../models/user");
 const {validateSignUpData} = require("../utils/validation")
 const jwt = require("jsonwebtoken");
 
-
 authRouter.post("/signup", async (req,res)=>{
     try{
         validateSignUpData(req)
@@ -51,5 +50,13 @@ authRouter.post("/login" , async (req,res)=>{
         res.send("Error : " + err.message)
     }
 })
+
+authRouter.post("/logout" , async (req,res)=>{
+    res.cookie("jwttoken",null , {
+        expires : new Date(Date.now())
+    });
+    res.send("Logged Out Successfully")
+})
+
 
 module.exports = authRouter;
